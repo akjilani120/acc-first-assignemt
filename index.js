@@ -4,9 +4,9 @@ const express = require('express');
 const router = require('./Routers/Users/Random/RandomUser.rounter');
 
 const app = express()
-const port = 5000
+const port = process.env.PORT || 5000
 
-app.use("/user/random", router)
+app.use("/user", router)
 app.get('/', (req, res)=> {
   res.send('Hello World!')
 })
