@@ -1,15 +1,16 @@
-var http = require('http');
+const http = require('http');
 
-var server = http.createServer(function(req, res){
+const express = require('express');
+const router = require('./Routers/Users/Random/RandomUser.rounter');
 
-    if(req.url == '/'){
-            // res.writeHead(200, {"Content-Type" : "applictaion/json"})
-            res.writeHead(200, {"Content-Type" : "application/json"})
-            // res.write("<h1>This is home page</h1>")
-            res.end(JSON.stringify({course : "ACC"}))
-     }
+const app = express()
+const port = 5000
 
-});
-const PORT = 5000
-server.listen(PORT); 
-console.log(`My code id ready ${PORT}`)
+app.use("/user/random", router)
+app.get('/', (req, res)=> {
+  res.send('Hello World!')
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
