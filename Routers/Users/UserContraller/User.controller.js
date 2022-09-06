@@ -1,46 +1,90 @@
 const fs = require("fs")
-const { use } = require("../Random/RandomUser.rounter")
 const data = fs.readFileSync("user.json")
-const parseData = JSON.parse(data)
+const users = JSON.parse(data)
 
 module.exports.RandomUser =(req , res) =>{
-    const randomNumber = Math.ceil(Math.random() * 8) 
-    const showData = parseData.find( d => d.id == randomNumber)      
+    const randomNumber = Math.ceil(Math.random() * users.length) 
+    const showData = users.find( d => d.id == randomNumber)      
     res.send(showData)  
      
 }
 module.exports.AllUser =(req , res) =>{
-res.send(parseData)
+const limit = req.query.limit
+res.send(users.slice(0 , limit))
 }
 module.exports.saveUser =(req , res) =>{
-const users = req.body 
-parseData.push(users)
-res.send(parseData)
+const data = req.body 
+console.log(data)
+if (data.name && data.address && data.photoUrl && data.id && data.gender && data.Contact) {
+    users.push(data)
+    fs.writeFile('user.json', JSON.stringify(users), (err) => {
+        if (err) {
+            res.send('error occurd')
+        }
+        res.send('successfully add data')
+    })
+} else {
+    res.send('Missing information')
+}
+
 }
 module.exports.updateUser =(req , res) =>{
 const {id} = req.params
-let newUpdate = parseData.find(data => data.id == id)
-newUpdate.id= id
-newUpdate.name = req.body.name
-console.log(newUpdate)
-res.send(newUpdate)
+let user = users.find(data => data.id == id)
+if (user) {
+    users.forEach(user => {
+        if (user.id == id) {
+            if (data.gender) { user.gender = data.gender }
+            if (data.address) { user.address = data.address }
+            if (data.name) { user.name = data.name }
+            if (data.photoUrl) { user.photoUrl = data.photoUrl }
+            if (data.Contact) { user.contact = data.Contact }
+        }
+    })
+    fs.writeFile('user.json', JSON.stringify(users), (err) => {
+        if (err) {
+            res.send('error occurd')
+        }
+        res.send('successfully update data')
+    })
+} else {
+    res.send('invalid user id')
+}
 }
 module.exports.bulkUpdateUser =(req , res) =>{
- const {id}=req.params
- const user = req.body
- const {name , gender, photoUrl , Contact} = user
- let newUpdate = parseData.find(data => data.id == id)
- newUpdate.id = id
- newUpdate.name= name
- newUpdate.gender=gender
- newUpdate.photoUrl = photoUrl
- newUpdate.Contact = Contact
- console.log(newUpdate)
-res.send(newUpdate)
+    const data = req.body;
+    users.forEach(user => {
+        data.forEach(d => {
+            if (user.id == d.id) {
+                if (d.gender) { user.gender = d.gender }
+                if (d.address) { user.address = d.address }
+                if (d.name) { user.name = d.name }
+                if (d.Contact) { user.contact = d.Contact }
+                if (d.photoUrl) { user.photoUrl = d.photoUrl }
+            }
+        })
+
+    });
+
+    fs.writeFile('user.json', JSON.stringify(users), (err) => {
+        if (err) {
+            res.send('error occurd')
+        }
+        res.send('successfully update data')
+    })
 }
 module.exports.deleteUser =(req , res) =>{
-const {id} = req.params
-const deleteData = parseData.filter(data => data.id != id)
-console.log(deleteData)
-res.send(deleteData)
+    const id = req.params.id;
+    const data = users.find(user => user.id == id)
+    if (data) {
+        const rest = users.filter(user => user.id != id)
+        fs.writeFile('user.json', JSON.stringify(rest), (err) => {
+            if (err) {
+                res.send('error occurd')
+            }
+            res.send('successfully delete data')
+        })
+    } else {
+        res.send('data is not includes in database!!')
+    }
 }
