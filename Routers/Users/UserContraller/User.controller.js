@@ -13,13 +13,16 @@ res.send(parseData)
 }
 module.exports.saveUser =(req , res) =>{
 const users = req.body 
-// const saveData = parseData.find(p => (p.id && p.gender && p.name && p.Contact && p.address && p.photoUrl ) !=(users.id && users.gender && users.name && users.Contact && users.address && users.photoUrl))
-// console.log(saveData)
 parseData.push(users)
 res.send(parseData)
 }
 module.exports.updateUser =(req , res) =>{
-res.send("Random  patch update  user")
+const {id} = req.params
+let newUpdate =parseData.find(data => data.id == id)
+newUpdate.id= id
+newUpdate.name = req.body.name
+console.log(newUpdate)
+res.send(newUpdate)
 }
 module.exports.bulkUpdateUser =(req , res) =>{
 res.send("Random  patch bulk update  user")
