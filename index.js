@@ -9,7 +9,7 @@ app.use(express.json())
 app.use(cors())
 app.use("/user", router)
 app.get('/', (req, res)=> {
-  res.send('acc first assignment !!!')
+  res.send('acc first assignment Complete !!!')
 })
 
 app.listen(port, () => {
